@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using TurnUpPortal.Utilites;
@@ -58,11 +59,85 @@ namespace TurnUpPortal.Pages
 
         }
         public void EditTimeRecord(IWebDriver driver)
-        {  //  put code for EditTime Record here 
-             }
+        {   Thread.Sleep(3000);
+            IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+            goToLastPageButton.Click();
+            Thread.Sleep(4000);
+           //  Edit the Time Record
+            IWebElement editButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[1]"));
+            editButton.Click();
+            Thread.Sleep(3000);
+
+            // Identify Code Text box and change text to TA-FAR
+            IWebElement editCodeText = driver.FindElement(By.XPath("//*[@id=\"Code\"]"));
+            editCodeText.Clear();
+            editCodeText.SendKeys("TA-FAR");
+
+            // Identify Description text box and enter description
+            IWebElement descriptionTextBoxM = driver.FindElement(By.XPath("//*[@id=\"Description\"]"));
+            descriptionTextBoxM.Clear();
+            descriptionTextBoxM.SendKeys("Time Record is now Edited");
+
+            // **Identify Price Text box and enter price value
+            // As this text box is with overlapping code so create first code for highlight the price
+            // field and then create code to enter the text
+            IWebElement overLapedField = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
+            overLapedField.Click();
+            IWebElement priceTextBoxM = driver.FindElement(By.XPath("//*[@id=\"Price\"]"));
+            priceTextBoxM.SendKeys(Keys.Control + "a");
+            priceTextBoxM.SendKeys(Keys.Delete);
+            priceTextBoxM.SendKeys("20");
+
+            // Identify Save Button and click on it
+            IWebElement saveButtonclick = driver.FindElement(By.Id("SaveButton"));
+            saveButtonclick.Click();
+            Thread.Sleep(5000);
+
+            // Validate if Time Record is Edited or Not
+            IWebElement EditedCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
+
+            if (EditedCode.Text == "TA-FAR")
+            {
+                Console.WriteLine("Time Record is Successfully Edited! Test is Passed!");
+            }
+            else
+
+            {
+                Console.WriteLine("Time Record is not Edited! Test is Failed");
+            }
+
+        }
         public void DeleteTimeRecord(IWebDriver driver)
         {
-            // put code for Delete Time Reecord here
+            Thread.Sleep(3000);
+            IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+            goToLastPageButton.Click();
+            Thread.Sleep(4000);
+
+            // Click on the Delete Button
+            IWebElement deleteButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]"));
+            deleteButton.Click();
+            Thread.Sleep(2000);
+
+            // Switch to Alert window to press Ok in Delete box
+            driver.SwitchTo().Alert().Accept();
+            Thread.Sleep(12000);
+            // driver.Navigate().Refresh();
+
+            // Check if Record is deleted or not
+            IWebElement deletedCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
+            if (deletedCode.Text != "TA-FAR")
+            {
+                Console.WriteLine("Record is deleted succeessfully! Test is Passed");
+            }
+            else
+            {
+                Console.WriteLine("Record is not deleted successfully so Test Is Failed");
+            }
+
+
+
+
         }
     }
 }
