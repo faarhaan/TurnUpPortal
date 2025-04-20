@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using TurnUpPortal.Utilites;
 
@@ -20,10 +21,16 @@ namespace TurnUpPortal.Pages
             driver.Manage().Window.Maximize();
             Thread.Sleep(1000);
 
-            // Step-3 Identify username text box and enter valid user name
-            IWebElement usernameTextbox = driver.FindElement(By.Id("UserName"));
-            usernameTextbox.SendKeys("hari");
-
+            try
+            {
+                // Step-3 Identify username text box and enter valid user name
+                IWebElement usernameTextbox = driver.FindElement(By.Id("UserName"));
+                usernameTextbox.SendKeys("hari");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("User text box not identified");
+            }
             Wait.WaitToBeVisible(driver, "Id", "Password", 7);
 
             // Step-4  Identify password textbox and enter valid password

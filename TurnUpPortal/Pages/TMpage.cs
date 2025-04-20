@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using TurnUpPortal.Utilites;
 
@@ -13,10 +14,17 @@ namespace TurnUpPortal.Pages
     {
         public void CreateTimeRecord(IWebDriver driver)
         {
-            //  Click on Create New button
-            IWebElement CreateNewButton = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
-            CreateNewButton.Click();
+            try
+            {
+                //  Click on Create New button
+                IWebElement CreateNewButton = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
+                CreateNewButton.Click();
+            }
+            catch (Exception ex)
 
+            {
+                Assert.Fail("Create New Button has not been found");
+            }
             // Identify Dropdown  and select Time option
             IWebElement timeDropdownOPtion = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]/span"));
             timeDropdownOPtion.Click();
@@ -37,25 +45,35 @@ namespace TurnUpPortal.Pages
             IWebElement priceTextBox = driver.FindElement(By.XPath("//*[@id=\"Price\"]"));
             priceTextBox.SendKeys("12");
             Wait.WaitToBeClickable(driver, "Id", "SaveButton", 2);
+
             // Click on Save Button
             IWebElement saveButton = driver.FindElement(By.Id("SaveButton"));
             saveButton.Click();
             Thread.Sleep(9000);
+
             //Wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 9);
-            // SCheck if Time Record is created successfully or not 
+            //Check if Time Record is created successfully or not 
             IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             goToLastPageButton.Click();
-            Thread.Sleep(5000);
-            IWebElement NewCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
+            Thread.Sleep(9000);
+            try
+            {
+                IWebElement NewCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
+                Assert.That(NewCode.Text == "123A", "Time Record is not created! Test is Failed");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("NewCode is not found");
+            }
 
-            if (NewCode.Text == "123A")
-            {
-                Console.WriteLine("new Time Record is created! Test is passed");
-            }
-            else
-            {
-                Console.WriteLine("Time Record is not created! Test is Failed");
-            }
+            //if (NewCode.Text == "123A")
+            //{
+            //    Assert.Pass("new Time Record is created! Test is passed");
+            //}                                                   
+            //else
+            //{
+            //    Assert.Fail("Time Record is not created! Test is Failed");
+            //}
 
         }
         public void EditTimeRecord(IWebDriver driver)
@@ -63,6 +81,7 @@ namespace TurnUpPortal.Pages
             IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             goToLastPageButton.Click();
             Thread.Sleep(4000);
+
            //  Edit the Time Record
             IWebElement editButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[1]"));
             editButton.Click();
@@ -91,7 +110,7 @@ namespace TurnUpPortal.Pages
             // Identify Save Button and click on it
             IWebElement saveButtonclick = driver.FindElement(By.Id("SaveButton"));
             saveButtonclick.Click();
-            Thread.Sleep(5000);
+            Thread.Sleep(8000);
 
             // Validate if Time Record is Edited or Not
             IWebElement EditedCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
